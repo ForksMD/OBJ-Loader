@@ -48,3 +48,6 @@ Visual_Studio/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Common build directory name
+build/
