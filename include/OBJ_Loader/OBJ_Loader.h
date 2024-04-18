@@ -428,7 +428,7 @@ namespace objl
 		//
 		// If the file is unable to be found
 		// or unable to be loaded return false
-		bool LoadFile(std::string Path)
+		bool LoadFile(std::string Path, std::string* materialDirectory = nullptr)
 		{
 			// If the file is not an .obj file return false
 			if (Path.substr(Path.size() - 4, 4) != ".obj")
@@ -440,6 +440,11 @@ namespace objl
 			if (!file.is_open())
 				return false;
 
+			return LoadStream(file);
+		}
+
+		bool LoadStream(std::istream &file)
+		{
 			LoadedMeshes.clear();
 			LoadedVertices.clear();
 			LoadedIndices.clear();
@@ -639,31 +644,7 @@ namespace objl
 				// Load Materials
 				if (algorithm::firstToken(curline) == "mtllib")
 				{
-					// Generate LoadedMaterial
-
-					// Generate a path to the material file
-					std::vector<std::string> temp;
-					algorithm::split(Path, temp, "/");
-
-					std::string pathtomat = "";
-
-					if (temp.size() != 1)
-					{
-						for (int i = 0; i < temp.size() - 1; i++)
-						{
-							pathtomat += temp[i] + "/";
-						}
-					}
-
-
-					pathtomat += algorithm::tail(curline);
-
-					#ifdef OBJL_CONSOLE_OUTPUT
-					std::cout << std::endl << "- find materials in: " << pathtomat << std::endl;
-					#endif
-
-					// Load Materials
-					LoadMaterials(pathtomat);
+					// ignore
 				}
 			}
 
@@ -682,8 +663,6 @@ namespace objl
 				// Insert Mesh
 				LoadedMeshes.push_back(tempMesh);
 			}
-
-			file.close();
 
 			// Set Materials for each Mesh
 			for (int i = 0; i < MeshMatNames.size(); i++)
